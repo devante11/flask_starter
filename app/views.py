@@ -45,6 +45,42 @@ def send_text_file(file_name):
     return app.send_static_file(file_dot_text)
 
 
+@app.route('/property', methods=["GET", "POST"])
+def add_property():
+    form=PropertyForm()
+    if request.method=='POST' and form.validate_on_submit():
+        title = request.form['title']
+        rooms=request.form['bedrooms']
+        bathrooms=request.form['bathrooms']
+        location=request.form['location']
+        price= request.form['price']
+        prop_type = request.form['houseType']
+        description=request.form['description']
+        filename= save_photos(form.photo.data) 
+        prop = Property(title, description, rooms, bathrooms, price, prop_type, location,filename)
+        db.session.add(prop)
+        db.session.commit()
+        return redirect(url_for('display_properties'))
+    return render_template('add_property.html',form=form)
+
+
+
+
+@app.route('/property/<propertyid>', methods=["GET"])
+def display_property(propertyid):
+    one_property = db.session.query(Property).filter(Property.id == propertyid).first()
+    return render_template('display_property.html', one_property=one_property)
+
+def save_photos(photo):
+    filename = secure_filename(photo.filename)
+    photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    return filename
+
+@app.route('/get_image/<filename>')
+def get_image(filename):
+    root_dir = os.getcwd()
+    return send_from_directory(os.path.join(root_dir, app.config['UPLOAD_FOLDER']), filename)
+
 @app.after_request
 def add_header(response):
     """
