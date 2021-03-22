@@ -6,6 +6,10 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'Som3$ec5etK*y'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://yourusername:yourpassword@localhost/databasename'
     SQLALCHEMY_TRACK_MODIFICATIONS = False # This is just here to suppress a warning from SQLAlchemy as it will soon be removed
+    UPLOAD_FOLDER = './uploads'
+
+
+
 app = Flask(_name_)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
 
