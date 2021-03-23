@@ -6,53 +6,25 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 class PropertyForm(FlaskForm):
     title = StringField('Property Title',
-    validators=
-    [
-        DataRequired()
-        ]
-    )
+    validators=[DataRequired()])
 
     Bedrooms=StringField('No. of Rooms', 
-    validators=
-    [
-        DataRequired()
-        ]
-    )
+    validators=[DataRequired()])
 
     Bathrooms=StringField('No. of Bathrooms',
-    validators=
-    [
-        DataRequired()
-        ]
-    )
+    validators=[DataRequired()])
 
     Location=StringField('Location',
-    validators=
-    [
-        DataRequired()
-        ]
-    )
+    validators=[DataRequired()])
 
     Price=StringField('Price',
-    validators=
-    [
-        DataRequired()
-        ]
-    )
+    validators= [ DataRequired()])
 
     HouseType= SelectField('Property Type',
     choices=[('House','House'),('Apartment','Apartment')])
 
     Description = TextAreaField('Description',
-    validators=
-    [
-        DataRequired()
-        ]
-    )
+    validators=[DataRequired()])
 
     Photo=FileField('Photo', 
-    validators=[
-        FileRequired(),
-        FileAllowed(['jpg', 'png', 'jpeg', 'Image Files Only'])
-    ]
-    )
+    validators=[FileRequired(),FileAllowed(['jpg', 'png', 'jpeg', 'Image Files Only'])])

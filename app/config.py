@@ -11,8 +11,6 @@ class Config(object):
 
 
 
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
 
 class DevelopmentConfig(Config):
     """Development Config that extends the Base Config Object"""
