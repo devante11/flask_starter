@@ -10,5 +10,4 @@ Flask-Migrate
 Flask-SQLAlchemy
 Flask-WTF
 WTForms==2.3.3
-psycopg2
 Flask-Session
