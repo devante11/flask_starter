@@ -5,9 +5,12 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-from app import app
-from flask import render_template, request, redirect, url_for
-
+import os
+from app import app,db
+from flask import render_template, flash, request, redirect, url_for,send_from_directory
+from .forms import PropertyForm
+from app.models import Property
+from werkzeug.utils import secure_filename
 
 ###
 # Routing for your application.
