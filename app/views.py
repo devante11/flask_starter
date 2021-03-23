@@ -66,7 +66,10 @@ def add_property():
         return redirect(url_for('display_properties'))
     return render_template('add_property.html',form=form)
 
-
+@app.route('/properties', methods=["GET"])
+def display_properties():
+    properties=db.session.query(Property).all()
+    return render_template('display_properties.html',properties=properties)
 
 
 @app.route('/property/<propertyid>', methods=["GET"])

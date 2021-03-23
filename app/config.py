@@ -1,5 +1,5 @@
 import os
-from Flask import Flask
+from flask import Flask
 
 class Config(object):
     """Base Config Object"""
@@ -11,7 +11,7 @@ class Config(object):
 
 
 
-app = Flask(_name_)
+app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
 
 class DevelopmentConfig(Config):
