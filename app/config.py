@@ -1,4 +1,5 @@
 import os
+from Flask import Flask
 
 class Config(object):
     """Base Config Object"""
