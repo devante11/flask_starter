@@ -4,13 +4,16 @@ Jinja2 Documentation:    http://jinja.pocoo.org/2/documentation/
 Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
-
 import os
-from app import app,db
-from flask import render_template, flash, request, redirect, url_for,send_from_directory
-from app.Forms import PropertyForm
-from app.Models import Property
+from app import app , models
+from flask import render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
+
+from .forms import PropertyForm
+from flask import send_from_directory
+
+from app.models import PropertyInfo
+from app import db
 
 ###
 # Routing for your application.
@@ -25,9 +28,52 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
+    return render_template('about.html', name="Devante Williams")
 
 
+@app.route('/property' , methods =['GET' ,'POST'])   
+def propertyy():
+
+    form = PropertyForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        title = form.title.data
+        number_of_bedrooms = form.number_of_bedrooms.data
+        number_of_bathrooms = form.number_of_bathrooms.data
+        location = form.location.data
+        price = form.price.data
+        typeHA= form.typeHA.data
+        description = form.description.data
+        photo = form.photo.data
+
+        filename = secure_filename(photo.filename)
+
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        property_info = PropertyInfo(title, number_of_bedrooms, number_of_bathrooms, location, price, typeHA, description, filename)
+        
+        db.session.add(property_info)
+        db.session.commit()
+
+        flash("Property was Successfully Added", "success")
+        return redirect(url_for('properties'))
+    return render_template("propertyform.html", form = form)
+    
+@app.route('/properties', methods = ['GET'])
+def properties():
+    properties = PropertyInfo.query.all()
+    if request.method == 'GET':
+        return render_template('properties.html', properties = properties)
+
+@app.route('/property/<propertyid>', methods = ['GET'])
+def propertyid(propertyid):
+    proprecord = PropertyInfo.query.filter_by(id = propertyid).first()
+    if request.method == 'GET':
+        return render_template('propertyid.html', properties = proprecord)
+
+@app.route('/upload/<filename>')
+def get_image(filename):
+    root_dir = os.getcwd()
+    return send_from_directory(os.path.join(root_dir, app.config['UPLOAD_FOLDER']), filename)
 ###
 # The functions below should be applicable to all Flask apps.
 ###
@@ -47,45 +93,6 @@ def send_text_file(file_name):
     file_dot_text = file_name + '.txt'
     return app.send_static_file(file_dot_text)
 
-
-@app.route('/property', methods=["GET", "POST"])
-def add_property():
-    form=PropertyForm()
-    if request.method=='POST' and form.validate_on_submit():
-        title = request.form['title']
-        rooms=request.form['bedrooms']
-        bathrooms=request.form['bathrooms']
-        location=request.form['location']
-        price= request.form['price']
-        prop_type = request.form['houseType']
-        description=request.form['description']
-        filename= save_photos(form.photo.data) 
-        prop = Property(title, description, rooms, bathrooms, price, prop_type, location,filename)
-        db.session.add(prop)
-        db.session.commit()
-        return redirect(url_for('display_properties'))
-    return render_template('add_property.html',form=form)
-
-@app.route('/properties', methods=["GET"])
-def display_properties():
-    properties=db.session.query(Property).all()
-    return render_template('display_properties.html',properties=properties)
-
-
-@app.route('/property/<propertyid>', methods=["GET"])
-def display_property(propertyid):
-    one_property = db.session.query(Property).filter(Property.id == propertyid).first()
-    return render_template('display_property.html', one_property=one_property)
-
-def save_photos(photo):
-    filename = secure_filename(photo.filename)
-    photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    return filename
-
-@app.route('/get_image/<filename>')
-def get_image(filename):
-    root_dir = os.getcwd()
-    return send_from_directory(os.path.join(root_dir, app.config['UPLOAD_FOLDER']), filename)
 
 @app.after_request
 def add_header(response):
